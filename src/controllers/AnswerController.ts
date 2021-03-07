@@ -9,10 +9,14 @@ class AnswerController {
     const { u } = req.query;
 
     const surveyUserRepository = getCustomRepository(SurveyUsersRepository);
-
     const surveyUser = await surveyUserRepository.findOne({ id: String(u) });
+
     if (!surveyUser) {
-      return res.status(400).json({ error: "Survey User does not exists!" });
+      throw new AppError("Survey User does not exists");
+    }
+
+    if (surveyUser.value) {
+      return res.status(200).json({ message: "Survey already answered" });
     }
 
     surveyUser.value = Number(value);
